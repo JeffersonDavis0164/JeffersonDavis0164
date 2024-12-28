@@ -1,0 +1,20 @@
+Crie as rotas para o cadastro de clientes (routes.py):
+Python
+
+from flask import Blueprint, request, jsonify
+from models import db, Cliente
+
+bp = Blueprint('clientes', __name__)
+
+@bp.route('/clientes', methods=['POST'])
+def add_cliente():
+    data = request.get_json()
+    novo_cliente = Cliente(nome=data['nome'], email=data['email'], telefone=data['telefone'])
+    db.session.add(novo_cliente)
+    db.session.commit()
+    return jsonify({'message': 'Cliente criado com sucesso!'}), 201
+
+@bp.route('/clientes', methods=['GET'])
+def get_clientes():
+    clientes = Cliente.query.all()
+    return jsonify([{'id': c.id, 'nome': c.nome, 'email': c.email, 'telefone': c.telefone} for c in clientes])
